@@ -1,20 +1,30 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UserLoginDto } from './dto/user-login.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
+import { UserLoginDto } from './dto/user-login.dto';
 import { UserInfo } from './UserInfo';
+
+
+
 
 @Controller('users')
 export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  //회원 가입 요청
   @Post()
   async createUser(@Body() dto: CreateUserDto): Promise<void> {
-    console.log(dto);
+    const {name,email,password} = dto;
+    await this.usersService.createUser(name,email,password);
+
   }
 
   @Post('/email-verify')
   async verifyEmail(@Query() dto: VerifyEmailDto): Promise<string> {
-    console.log(dto);
-    return;
+    const {signupVerifyToken} =dto
+    return await this.usersService.verifyEmail(signupVerifyToken);
   }
 
   @Post('/login')
@@ -27,5 +37,32 @@ export class UsersController {
   async getUserInfo(@Param('id') userId: string): Promise<UserInfo> {
     console.log(userId);
     return;
+  }
+
+
+
+  @Post()
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.create(createUserDto);
+  }
+
+  @Get()
+  findAll() {
+    return this.usersService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.usersService.findOne(+id);
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.update(+id, updateUserDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.usersService.remove(+id);
   }
 }
