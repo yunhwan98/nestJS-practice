@@ -1,20 +1,34 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as uuid from 'uuid'
 import { EmailService } from 'src/email/email.service';
 import { UserInfo } from './UserInfo';
+import { UserEntity } from './entities/user.entity';
+
+import { InjectRepository } from '@nestjs/typeorm/dist';
+import { Repository } from 'typeorm';
+import { ulid } from 'ulid';
+
 
 
 @Injectable()
 export class UsersService {
   
-  constructor(private emailService: EmailService){}
+  constructor(private emailService: EmailService,
+
+        //유저 저장소 주입
+        @InjectRepository(UserEntity) private userRepository: Repository<UserEntity>,
+    
+    ){}
 
   async createUser(name: string, email: string, password:string){
 
-
-    await this.checkUserExists(email);
+    //기존 유저 정보 확인
+    const userExists = await this.checkUserExists(email);
+    if(userExists){
+      throw new UnprocessableEntityException('해당 이메일로는 가입할 수 없습니다.')
+    }
 
     const signupVerifyToken = uuid.v1()
 
@@ -25,13 +39,25 @@ export class UsersService {
   }
 
   //유저 존재 검사
-  private checkUserExists(email: string){
-    return false; //TODO: DB 연동 후 구현
+  private async checkUserExists(emailAddress: string):Promise<boolean>{
+
+    const user = await this.userRepository.findOne({
+      where: {email: emailAddress}
+    })
+
+    return user !== undefined;
   }
 
   //유저를 DB에 저장
-  private saveUser(name: string, email: string, password: string, signupVerifyToken: string){
-    return; //TODO: DB 연동 후 구현
+  private async saveUser(name: string, email:string,password: string, signupVerifyToken: string){
+    const user =new UserEntity();
+    user.id =ulid();
+    user.name=name;
+    user.email=email;
+    user.password=password;
+    user.signupVerifyToken=signupVerifyToken;
+    await this.userRepository.save(user);
+
   }
 
   
@@ -72,6 +98,7 @@ export class UsersService {
     throw new Error('Method not implemented.');
 
   }
+
 
   
 
