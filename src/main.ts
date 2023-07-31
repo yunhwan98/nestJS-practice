@@ -7,7 +7,8 @@ import * as path from "path";
 //dotenv 환경설정
 dotenv.config({
   path: path.resolve(
-    (process.env.NODE_ENV === 'production') ? '.production.env'
+    (process.env.NODE_ENV === 'production') 
+    ? '.production.env'
     : (process.env.NODE_ENV === 'stage') ? '.stage.env' : '.development.env'
   )
 })

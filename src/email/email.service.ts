@@ -1,7 +1,11 @@
 import Mail =require('nodemailer/lib/mailer')
 import * as nodemailer from 'nodemailer'
 
-import { Injectable } from '@nestjs/common';
+import {ConfigType} from'@nestjs/config'
+import { Inject,Injectable } from '@nestjs/common';
+import emailConfig from 'src/config/emailConfig';
+
+
 
 //메일 옵션 타입
 interface EmailOptions{
@@ -16,19 +20,21 @@ export class EmailService {
     private transporter: Mail;
 
 
-    constructor(){
+    constructor(
+        @Inject(emailConfig.KEY) private config: ConfigType<typeof emailConfig>
+    ){
         //transporter 객체 생성
         this.transporter = nodemailer.createTransport({
-            service: "Gmail",
+            service: config.service,
             auth: {
-                user: "yunhwan980107@gmail.com",
-                pass: "cakslzsalhyqxyey",
+                user: config.auth.user,
+                pass: config.auth.pass,
             }
         })
     }
 
     async sendMemberJoinVerification(emailAddress: string, signupVerifyToken:string){
-        const baseUrl = 'http://localhost:3000';
+        const baseUrl = this.config.baseUrl
 
         //유저가 누를 버튼의 링크
         const url =`${baseUrl}/users/email-verify?signupVerifyToken=${signupVerifyToken}`;

@@ -1,16 +1,25 @@
 import { Module } from '@nestjs/common';
-import { UsersController } from './users/users.controller';
+import { ConfigModule } from '@nestjs/config/dist';
+import emailConfig from './config/emailConfig';
 
-import { UsersService } from './users/users.service';
-import { EmailService } from './email/email.service';
+
 import { UsersModule } from './users/users.module';
-import { EmailModule } from './email/email.module';
-import { AppController } from './app.controller';
+import { validationSchema } from './config/validationSchema';
 
 
 @Module({
-  imports: [UsersModule, EmailModule],
-  controllers: [AppController],
+  imports: [
+    UsersModule,
+    ConfigModule.forRoot({
+      //절대 경로 설정
+      envFilePath:[`${__dirname}/config/env/.${process.env.NODE_ENV}.env`],
+      load: [emailConfig],
+      isGlobal: true,
+      //유효성 검사
+      validationSchema,
+    }),
+  ],
+  controllers: [],
   providers: [],
 
 
