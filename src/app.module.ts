@@ -5,11 +5,12 @@ import { UsersService } from './users/users.service';
 import { EmailService } from './email/email.service';
 import { UsersModule } from './users/users.module';
 import { EmailModule } from './email/email.module';
+import { AppController } from './app.controller';
 
 
 @Module({
   imports: [UsersModule, EmailModule],
-  controllers: [],
+  controllers: [AppController],
   providers: [],
 
 
