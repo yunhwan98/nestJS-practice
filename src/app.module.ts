@@ -16,6 +16,7 @@ import {
   WinstonModule,
 } from 'nest-winston';
 import { ExceptionModule } from './exception/exception.module';
+import { LoggingModule } from './logging/logging.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { ExceptionModule } from './exception/exception.module';
     //   ],
     // }),
     ExceptionModule,
+    LoggingModule,
   ],
   controllers: [],
   providers: [],
