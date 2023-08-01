@@ -10,10 +10,16 @@ import { AuthModule } from './auth/auth.module';
 import authConfig from './config/authConfig';
 
 
+import * as winston from 'winston';
+import {
+  utilities as nestWinstonModuleUtilities,
+  WinstonModule,
+} from 'nest-winston';
+
 @Module({
   imports: [
     UsersModule,
-    ConfigModule.forRoot({
+    ConfigModule.forRoot({      
       //절대 경로 설정
       envFilePath:[`${__dirname}/config/env/.${process.env.NODE_ENV}.env`],
       load: [emailConfig,authConfig],
@@ -34,7 +40,19 @@ import authConfig from './config/authConfig';
       //DB 스키마 동기화 여부(프로덕션에서는 false!)
       synchronize: process.env.DATABASE_SYNCRONIZE === 'true',
     }),
-    AuthModule
+    AuthModule,
+    WinstonModule.forRoot({
+      transports: [
+        new winston.transports.Console({
+          level: process.env.NODE_ENV === 'production' ? 'info' : 'silly',
+          format: winston.format.combine(
+            //로그 시간 표시
+            winston.format.timestamp(),
+            nestWinstonModuleUtilities.format.nestLike('MyApp', { prettyPrint: true }),
+          ),
+        }),
+      ],
+    }),
   ],
   controllers: [],
   providers: [],
