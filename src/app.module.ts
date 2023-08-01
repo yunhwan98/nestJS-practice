@@ -6,6 +6,8 @@ import emailConfig from './config/emailConfig';
 import { UsersModule } from './users/users.module';
 import { validationSchema } from './config/validationSchema';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './auth/auth.module';
+import authConfig from './config/authConfig';
 
 
 @Module({
@@ -14,7 +16,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     ConfigModule.forRoot({
       //절대 경로 설정
       envFilePath:[`${__dirname}/config/env/.${process.env.NODE_ENV}.env`],
-      load: [emailConfig],
+      load: [emailConfig,authConfig],
       isGlobal: true,
       //유효성 검사
       validationSchema,
@@ -31,7 +33,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
       //DB 스키마 동기화 여부(프로덕션에서는 false!)
       synchronize: process.env.DATABASE_SYNCRONIZE === 'true',
-    })
+    }),
+    AuthModule
   ],
   controllers: [],
   providers: [],
