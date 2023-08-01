@@ -3,8 +3,8 @@ import { ulid } from 'ulid';
 import { DataSource, Repository } from 'typeorm';
 import { Injectable, InternalServerErrorException, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserInfo } from './UserInfo';
-import { UserEntity } from './entities/user.entity';
+import { UserInfo } from './interface/UserInfo';
+import { UserEntity } from './infra/db/entity/user.entity';
 import { AuthService } from 'src/auth/auth.service';
 import { EmailService } from 'src/email/email.service';
 
