@@ -15,6 +15,7 @@ import {
   utilities as nestWinstonModuleUtilities,
   WinstonModule,
 } from 'nest-winston';
+import { ExceptionModule } from './exception/exception.module';
 
 @Module({
   imports: [
@@ -41,18 +42,19 @@ import {
       synchronize: process.env.DATABASE_SYNCRONIZE === 'true',
     }),
     AuthModule,
-    WinstonModule.forRoot({
-      transports: [
-        new winston.transports.Console({
-          level: process.env.NODE_ENV === 'production' ? 'info' : 'silly',
-          format: winston.format.combine(
-            //로그 시간 표시
-            winston.format.timestamp(),
-            nestWinstonModuleUtilities.format.nestLike('MyApp', { prettyPrint: true }),
-          ),
-        }),
-      ],
-    }),
+    // WinstonModule.forRoot({
+    //   transports: [
+    //     new winston.transports.Console({
+    //       level: process.env.NODE_ENV === 'production' ? 'info' : 'silly',
+    //       format: winston.format.combine(
+    //         //로그 시간 표시
+    //         winston.format.timestamp(),
+    //         nestWinstonModuleUtilities.format.nestLike('MyApp', { prettyPrint: true }),
+    //       ),
+    //     }),
+    //   ],
+    // }),
+    ExceptionModule,
   ],
   controllers: [],
   providers: [],
